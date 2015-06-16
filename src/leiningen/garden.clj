@@ -69,7 +69,10 @@
            (doseq [build# builds#]
              (try
                (doseq [ns-sym# nss#] (require ns-sym# :reload))
-               (let [stylesheet# (deref (:stylesheet build#))
+               (let [stylesheet# (let [ss# (deref (:stylesheet build#))]
+                                   (if (fn? ss#)
+                                     (ss#)
+                                     (deref ss#)))
                      flags# (:compiler build#)]
                  (println (str "Compiling " (pr-str (:output-to flags#)) "..."))
                  (garden.core/css flags# stylesheet#)
